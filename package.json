@@ -1,0 +1,37 @@
+{
+  "name"           : "sails-generate-archive",
+  "version"        : "0.10.0",
+  "description"    : "sails generate archive",
+  "main"           : "Generator.js",
+  "scripts"        : {
+	"test": "mocha"
+  },
+  "keywords"       : [
+	"archive",
+	"generator",
+	"sails",
+	"generate",
+	"plugin"
+  ],
+  "author"         : "balderdashy",
+  "license"        : "MIT",
+  "dependencies"   : {
+	"fs"             : "0.0.2",
+	"fs-extra"       : "^0.24.0",
+	"lodash"         : ">=2.4.x",
+	"machinepack-zip": "^1.1.0",
+	"merge-defaults" : ">=0.1.0",
+	"path"           : "^0.11.14",
+	"yesno"          : "0.0.1"
+  },
+  "devDependencies": {
+	"sails-generate": "*",
+	"reportback"    : "*",
+	"fs-extra"      : "*"
+  },
+  "sailsGenerator" : {
+	"type"        : "archive",
+	"behavior"    : "overrides `sails generate archive`",
+	"sailsVersion": "~0.10.0"
+  }
+}
