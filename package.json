@@ -1,10 +1,9 @@
 {
   "name"           : "sails-generate-archive",
-  "version"        : "0.10.0",
-  "description"    : "sails generate archive",
+  "version"    : "0.0.2",
+  "description": "A `archive` generator for use with the Sails command-line interface.",
   "main"           : "Generator.js",
   "scripts"        : {
-	"test": "mocha"
   },
   "keywords"       : [
 	"archive",
@@ -13,7 +12,11 @@
 	"generate",
 	"plugin"
   ],
-  "author"         : "balderdashy",
+  "repository" : {
+	"type": "git",
+	"url" : "https://github.com/jaumard/sails-generate-archive.git"
+  },
+  "author"     : "jaumard",
   "license"        : "MIT",
   "dependencies"   : {
 	"fs"             : "0.0.2",

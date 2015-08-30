@@ -19,6 +19,32 @@ _.defaults = require('merge-defaults');
 var fs   = require("fs-extra");
 var path = require("path");
 
+var rmdir = function (dir)
+{
+	var list = fs.readdirSync(dir);
+	for (var i = 0; i < list.length; i++)
+	{
+		var filename = path.join(dir, list[i]);
+		var stat     = fs.statSync(filename);
+
+		if (filename == "." || filename == "..")
+		{
+			// pass these files
+		}
+		else if (stat.isDirectory())
+		{
+			// rmdir recursively
+			rmdir(filename);
+		}
+		else
+		{
+			// rm fiilename
+			fs.unlinkSync(filename);
+		}
+	}
+	fs.rmdirSync(dir);
+};
+
 module.exports = {
 
 	/**
@@ -63,32 +89,6 @@ module.exports = {
 			console.error('');
 			return;
 		}
-
-		var rmdir = function (dir)
-		{
-			var list = fs.readdirSync(dir);
-			for (var i = 0; i < list.length; i++)
-			{
-				var filename = path.join(dir, list[i]);
-				var stat     = fs.statSync(filename);
-
-				if (filename == "." || filename == "..")
-				{
-					// pass these files
-				}
-				else if (stat.isDirectory())
-				{
-					// rmdir recursively
-					rmdir(filename);
-				}
-				else
-				{
-					// rm fiilename
-					fs.unlinkSync(filename);
-				}
-			}
-			fs.rmdirSync(dir);
-		};
 
 		sails.lift({
 			environment : "production",
@@ -166,6 +166,7 @@ module.exports = {
 		var Zip = require('machinepack-zip');
 
 		myPath = path.resolve(myPath, "..");
+
 		// Compress the specified source files or directories into a .zip file.
 		Zip.zip({
 			sources     : [myPath + "/"],
