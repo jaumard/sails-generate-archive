@@ -17,6 +17,23 @@ Like this all you have to do with the zip file is unzip it, make an npm install 
 
 Sails will start quickly cause they only copy /assets folder in .tmp/public and it doesn't rebuild them.
 
+## How to deploy my archive ? 
+
+It's simple, first unzip your archive :
+
+    unzip archive0.0.1.zip -d myProject
+    cd myProject
+
+Install dependencies : 
+
+    npm install
+
+Run your project in production : 
+
+    sails lift --prod
+
+Easy right ? :)
+
 ## Why should I use this ?
 If you use a server with low resources or if you deploy you project on a board like Raspberry PI. Your project will stat quickly because grunt tasks don't rebuild assets.
 
