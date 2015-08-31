@@ -4,7 +4,7 @@ An `archive` generator for use with the Sails command-line interface.
 
 This generate create a zip file (named "archiveX.X.X.zip") under a .archives folder who contains every files for a production server.
 
-## How does it works ? 
+### How does it works ? 
 The generator build all your assets files (js, css...) by lifting sails in production mode and then include all files in .tmp/public in zip file.
 
 The generator also include all this file : 
@@ -17,7 +17,7 @@ Like this all you have to do with the zip file is unzip it, make an npm install 
 
 Sails will start quickly cause they only copy /assets folder in .tmp/public and it doesn't rebuild them.
 
-## How to deploy my archive ? 
+### How to deploy my archive ? 
 
 It's simple, first unzip your archive :
 
@@ -34,7 +34,7 @@ Run your project in production :
 
 Easy right ? :)
 
-## Why should I use this ?
+### Why should I use this ?
 If you use a server with low resources or if you deploy you project on a board like Raspberry PI. Your project will stat quickly because grunt tasks don't rebuild assets.
 
 ### Installation
