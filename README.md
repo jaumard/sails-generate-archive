@@ -1,9 +1,34 @@
 # sails-generate-archive
 
-A `archive` generator for use with the Sails command-line interface.
+An `archive` generator for use with the Sails command-line interface.
 
+This generate create a zip file (named "archiveX.X.X.zip") under a .archives folder who contains every files for a production server.
+
+## How does it works ? 
+The generator build all your assets files (js, css...) by lifting sails in production mode and then include all files in .tmp/public in zip file.
+
+The generator also include all this file : 
+
+```
+["/api", "/config", "/tasks", "/views", "/Gruntfile.js", "/app.js", "/package.json", "/.sailsrc"]
+```
+
+Like this all you have to do with the zip file is unzip it, make an npm install and then lift sails in production mode.
+
+Sails will start quickly cause they only copy /assets folder in .tmp/public and it doesn't rebuild them.
+
+## Why should I use this ?
+If you use a server with low resources or if you deploy you project on a board like Raspberry PI. Your project will stat quickly because grunt tasks don't rebuild assets.
 
 ### Installation
+
+Globally to use on every project you have (need to install sails globally too)
+
+```sh
+$ npm install -g sails-generate-archive
+```
+
+or for one project
 
 ```sh
 $ npm install sails-generate-archive
@@ -18,7 +43,14 @@ $ npm install sails-generate-archive
 $ sails generate archive 
 ```
 
+### Configuration 
+If you want to put other files in archives just add a /config/archive.js file like this : 
 
+```
+module.exports.archive = {
+	filesToArchive : ["/file1.js", "/testFolder"]
+};
+```
 
 ### Development
 

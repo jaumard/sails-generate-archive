@@ -4,6 +4,7 @@
 
 var util   = require('util');
 var _      = require('lodash');
+var async = require('async');
 _.defaults = require('merge-defaults');
 
 
@@ -60,7 +61,8 @@ module.exports = {
 
 	before    : function (scope, cb)
 	{
-		var me = this;
+		scope.filesToArchive = [];
+		var me               = this;
 
 		// scope.rootPath is the base path for this generator
 		//
@@ -89,8 +91,8 @@ module.exports = {
 			console.error('');
 			return;
 		}
-
-		sails.lift({
+		console.info("Building production assets...");
+		sails.load({
 			environment : "production",
 			port        : 1338,
 			log         : {
@@ -104,6 +106,10 @@ module.exports = {
 			}
 			else
 			{
+				if (sails.config.archive)
+				{
+					scope = _.merge(scope, sails.config.archive);
+				}
 				var project = require(scope.rootPath + "/package.json");
 				var myPath  = scope.rootPath + "/.archives";
 				if (!fs.existsSync(myPath))
@@ -133,8 +139,6 @@ module.exports = {
 				{
 					me.copyFiles(scope, myPath, cb);
 				}
-
-
 			}
 		});
 	},
@@ -143,50 +147,91 @@ module.exports = {
 		var project = require(scope.rootPath + "/package.json");
 		fs.mkdirSync(myPath);
 
-		var filesToCopy = ["/api", "/config", "/tasks", "/views", "/Gruntfile.js", "/app.js", "/package.json", "/.sailsrc"];
+		var filesToCopy = ["/api", "/config", "/tasks", "/views", "/Gruntfile.js", "/app.js", "/package.json", "/.sailsrc"].concat(scope.filesToArchive);
 
-		for (var i = 0; i < filesToCopy.length; i++)
+		async.parallel([function (cb)
 		{
-			var obj = filesToCopy[i];
-			fs.copySync(scope.rootPath + obj, myPath + obj);
-		}
+			async.each(filesToCopy, function (fileToCopy, next)
+			{
+				console.log("Copying " + fileToCopy + "...");
+				fs.copy(scope.rootPath + fileToCopy, myPath + fileToCopy, function (err)
+				{
+					next(err);
+				});
 
-		myPath += "/assets/";
-		fs.mkdirSync(myPath);
+			}, function ()
+			{
+				console.log("Server files done");
+				fs.unlinkSync(myPath + "/config/local.js");
+				fs.unlinkSync(myPath + "/tasks/register/prod.js");
 
-		var tmpDir = scope.rootPath + "/.tmp/public";
-		var files  = fs.readdirSync(tmpDir);
-
-		for (var i = 0; i < files.length; i++)
+				fs.writeFile(myPath + "/tasks/register/prod.js", "module.exports = function (grunt){grunt.registerTask('prod', ['copy:dev']);};", function (err)
+				{
+					console.log("local.js deleted and prod.js modified", err);
+					cb(err);
+				});
+			});
+		}, function (cb)
 		{
-			var obj = files[i];
-			fs.copySync(scope.rootPath + "/.tmp/public/" + obj, myPath + obj);
-		}
+			var assetsPath = myPath + "/assets/";
+			fs.mkdirSync(assetsPath);
+			var tmpDir     = scope.rootPath + "/.tmp/public";
+			var files      = fs.readdirSync(tmpDir);
 
-		var Zip = require('machinepack-zip');
+			async.each(files, function (fileToCopy, next)
+			{
+				console.log("Copying " + fileToCopy + "...");
+				fs.copy(scope.rootPath + "/.tmp/public/" + fileToCopy, assetsPath + fileToCopy, function (err)
+				{
+					next(err);
+				});
 
-		myPath = path.resolve(myPath, "..");
-
-		// Compress the specified source files or directories into a .zip file.
-		Zip.zip({
-			sources     : [myPath + "/"],
-			destination : myPath + "/../archive" + project.version + ".zip"
-		}).exec({
-			// An unexpected error occurred.
-			error   : function (err)
+			}, function (err)
 			{
 				cb(err);
-			}, // OK.
-			success : function (result)
+			});
+		}], function (err)
+		{
+			if (err)
 			{
-				rmdir(myPath + "/");
-				// When finished, we trigger a callback with no error
-				// to begin generating files/folders as specified by
-				// the `targets` below.
-				cb();
-				process.exit();//Kill sails server and exit script
+				cb(err);
+			}
+			else
+			{
+				var Zip = require('machinepack-zip');
+
+				//myPath = path.resolve(myPath, "..");
+				console.info("Archiving files...");
+				// Compress the specified source files or directories into a .zip file.
+				Zip.zip({
+					sources     : [myPath + "/"],
+					destination : myPath + "/../archive" + project.version + ".zip"
+				}).exec({
+					// An unexpected error occurred.
+					error   : function (err)
+					{
+						cb(err);
+					}, // OK.
+					success : function (result)
+					{
+						//rmdir(myPath + "/");
+						// When finished, we trigger a callback with no error
+						// to begin generating files/folders as specified by
+						// the `targets` below.
+						console.info("Build archive " + project.version + " done");
+						cb();
+						process.exit();//Kill sails server and exit script
+					}
+				});
 			}
 		});
+
+		/*
+		 for (var i = 0; i < filesToCopy.length; i++)
+		 {
+		 var obj = filesToCopy[i];
+		 fs.copySync(scope.rootPath + obj, myPath + obj);
+		 }*/
 
 	},
 
