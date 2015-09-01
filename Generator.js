@@ -62,7 +62,13 @@ module.exports = {
 	before    : function (scope, cb)
 	{
 		scope.filesToArchive = [];
+		scope.removeFolder = true;
 		var me               = this;
+
+		if (scope.args.length > 0)
+		{
+			scope.filesToArchive = scope.args;
+		}
 
 		// scope.rootPath is the base path for this generator
 		//
@@ -167,7 +173,7 @@ module.exports = {
 
 				fs.writeFile(myPath + "/tasks/register/prod.js", "module.exports = function (grunt){grunt.registerTask('prod', ['copy:dev']);};", function (err)
 				{
-					console.log("local.js deleted and prod.js modified", err);
+					console.log("local.js deleted and prod.js modified");
 					cb(err);
 				});
 			});
@@ -214,7 +220,10 @@ module.exports = {
 					}, // OK.
 					success : function (result)
 					{
-						//rmdir(myPath + "/");
+						if (scope.removeFolder)
+						{
+							rmdir(myPath + "/");
+						}
 						// When finished, we trigger a callback with no error
 						// to begin generating files/folders as specified by
 						// the `targets` below.
@@ -225,14 +234,6 @@ module.exports = {
 				});
 			}
 		});
-
-		/*
-		 for (var i = 0; i < filesToCopy.length; i++)
-		 {
-		 var obj = filesToCopy[i];
-		 fs.copySync(scope.rootPath + obj, myPath + obj);
-		 }*/
-
 	},
 
 	/**
@@ -240,24 +241,7 @@ module.exports = {
 	 * @type {Object}
 	 */
 
-	targets : {
-
-		// Usage:
-		// './path/to/destination.foo': { someHelper: opts }
-
-		// Creates a dynamically-named file relative to `scope.rootPath`
-		// (defined by the `filename` scope variable).
-		//
-		// The `template` helper reads the specified template, making the
-		// entire scope available to it (uses underscore/JST/ejs syntax).
-		// Then the file is copied into the specified destination (on the left).
-		//'./:filename': { template: 'example.template.js' },
-
-		// Creates a folder at a static path
-		//'./hey_look_a_folder': { folder: {} }
-
-	},
-
+	targets : {},
 
 	/**
 	 * The absolute path to the `templates` for this generator

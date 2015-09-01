@@ -1,6 +1,6 @@
 {
   "name"           : "sails-generate-archive",
-  "version"        : "0.0.3",
+  "version": "0.0.4",
   "description"    : "A `archive` generator for use with the Sails command-line interface.\nThis generate create a zip file (named \"archiveX.X.X.zip\") under a .archives folder who contains every files for a production server.",
   "main"           : "Generator.js",
   "scripts"        : {},

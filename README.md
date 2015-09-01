@@ -35,7 +35,7 @@ Run your project in production :
 Easy right ? :)
 
 ### Why should I use this ?
-If you use a server with low resources or if you deploy you project on a board like Raspberry PI. Your project will stat quickly because grunt tasks don't rebuild assets.
+If you use a server with low resources or if you deploy you project on a board like Raspberry PI. Your project will start quickly because grunt tasks don't rebuild assets.
 
 ### Installation
 
@@ -60,12 +60,19 @@ $ npm install sails-generate-archive
 $ sails generate archive 
 ```
 
+You can add file and folder if you want like this  : 
+
+```sh
+$ sails generate archive file1.js folder1 folder2 
+```
+
 ### Configuration 
 If you want to put other files in archives just add a /config/archive.js file like this : 
 
 ```
 module.exports.archive = {
-	filesToArchive : ["/file1.js", "/testFolder"]
+	filesToArchive : ["/file1.js", "/testFolder"],
+	removeFolder : true // Default to true, delete the tmp folder after ziping. You can force to false if you want to check or modify it after.
 };
 ```
 
