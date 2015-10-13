@@ -210,7 +210,7 @@ module.exports = {
 				console.info("Archiving files...");
 				// Compress the specified source files or directories into a .zip file.
 				Zip.zip({
-					sources     : [myPath + "/"],
+					sources : [myPath + "/*"],
 					destination : myPath + "/../archive" + project.version + ".zip"
 				}).exec({
 					// An unexpected error occurred.
