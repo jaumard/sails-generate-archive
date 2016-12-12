@@ -1,5 +1,7 @@
 # sails-generate-archive
 
+**DEPRECATED : NOT MAINTAINED ANYMORE** I'm using Trails now, if you want access to this repo to contribute and maintain it, please let me know.
+
 An `archive` generator for use with the Sails command-line interface.
 
 This generate create a zip file (named "archiveX.X.X.zip") under a .archives folder who contains every files for a production server.
